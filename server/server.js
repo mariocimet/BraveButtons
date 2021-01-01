@@ -505,6 +505,13 @@ async function updateSentAlerts(hubParam, sentAlerts) {
   }
 }
 
+app.post('/alert/test', async (req, res) => {
+  res.status(200).send({
+    key1: 'value1',
+    key2: 2,
+  })
+})
+
 async function checkHeartbeat() {
   try {
     const hubs = await db.getHubs()
