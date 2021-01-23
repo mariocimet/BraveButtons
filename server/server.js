@@ -3,6 +3,7 @@ const fs = require('fs')
 const Validator = require('express-validator')
 const express = require('express')
 const https = require('https')
+const WebSocket = require('ws')
 const moment = require('moment-timezone')
 const bodyParser = require('body-parser')
 const { Parser } = require('json2csv')
@@ -577,6 +578,27 @@ if (helpers.isTestEnvironment()) {
   server = https.createServer(httpsOptions, app).listen(443)
   setInterval(checkHeartbeat, 1000)
   helpers.log('brave server listening on port 443')
+
+  // Set up web sockets
+  const wss = new WebSocket.Server({ server })
+  wss.on('connection', ws => {
+    ws.on('message', message => {
+      helpers.log(`Received ${message}`)
+      ws.send(
+        JSON.stringify({
+          type: 'OTHER',
+          data: `You sent me "${message}"`,
+        }),
+      )
+    })
+
+    ws.send(
+      JSON.stringify({
+        type: 'CONNECTED',
+        data: 'Feedback from connection',
+      }),
+    )
+  })
 }
 
 module.exports.braveAlerter = braveAlerter // for tests
