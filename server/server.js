@@ -28,7 +28,6 @@ const heartbeatDashboardTemplate = fs.readFileSync(`${__dirname}/heartbeatDashbo
 const chatbotDashboardTemplate = fs.readFileSync(`${__dirname}/chatbotDashboard.mst`, 'utf-8')
 
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(express.static(__dirname))
 
 // Configure BraveAlerter
 const braveAlerter = new BraveAlerterConfigurator().createBraveAlerter()
