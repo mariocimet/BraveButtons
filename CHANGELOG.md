@@ -11,6 +11,9 @@ the code was deployed.
 
 ## [Unreleased]
 
+### Added
+- Sentry integration for tracking errors and outages (CU-32a5wb)
+
 ## [3.5.1] - 2021-04-19
 
 ### Fixes

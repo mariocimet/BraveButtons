@@ -46,12 +46,12 @@ async function beginTransaction() {
     // we should revisit this when / if db performance becomes a concern
     await client.query('LOCK TABLE sessions, buttons, installations, migrations')
   } catch (e) {
-    helpers.log(`Error running the beginTransaction query: ${e}`)
+    helpers.logError(`Error running the beginTransaction query: ${e}`)
     if (client) {
       try {
         await this.rollbackTransaction(client)
       } catch (err) {
-        helpers.log(`beginTransaction: Error rolling back the errored transaction: ${err}`)
+        helpers.logError(`beginTransaction: Error rolling back the errored transaction: ${err}`)
       }
     }
   }
@@ -63,12 +63,12 @@ async function commitTransaction(client) {
   try {
     await client.query('COMMIT')
   } catch (e) {
-    helpers.log(`Error running the commitTransaction query: ${e}`)
+    helpers.logError(`Error running the commitTransaction query: ${e}`)
   } finally {
     try {
       client.release()
     } catch (err) {
-      helpers.log(`commitTransaction: Error releasing client: ${err}`)
+      helpers.logError(`commitTransaction: Error releasing client: ${err}`)
     }
   }
 }
@@ -77,12 +77,12 @@ async function rollbackTransaction(client) {
   try {
     await client.query('ROLLBACK')
   } catch (e) {
-    helpers.log(`Error running the rollbackTransaction query: ${e}`)
+    helpers.logError(`Error running the rollbackTransaction query: ${e}`)
   } finally {
     try {
       client.release()
     } catch (err) {
-      helpers.log(`rollbackTransaction: Error releasing client: ${err}`)
+      helpers.logError(`rollbackTransaction: Error releasing client: ${err}`)
     }
   }
 }
@@ -104,13 +104,13 @@ async function getUnrespondedSessionWithButtonId(buttonId, clientParam) {
       return createSessionFromRow(rows[0])
     }
   } catch (e) {
-    helpers.log(`Error running the getUnrespondedSessionWithButtonId query: ${e}`)
+    helpers.logError(`Error running the getUnrespondedSessionWithButtonId query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getUnrespondedSessionWithButtonId: Error releasing client: ${err}`)
+        helpers.logError(`getUnrespondedSessionWithButtonId: Error releasing client: ${err}`)
       }
     }
   }
@@ -135,13 +135,13 @@ async function getMostRecentIncompleteSessionWithPhoneNumber(phoneNumber, client
       return createSessionFromRow(rows[0])
     }
   } catch (e) {
-    helpers.log(`Error running the getMostRecentIncompleteSessionWithPhoneNumber query: ${e}`)
+    helpers.logError(`Error running the getMostRecentIncompleteSessionWithPhoneNumber query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getMostRecentIncompleteSessionWithPhoneNumber: Error releasing client: ${err}`)
+        helpers.logError(`getMostRecentIncompleteSessionWithPhoneNumber: Error releasing client: ${err}`)
       }
     }
   }
@@ -164,13 +164,13 @@ async function getAllSessionsWithButtonId(buttonId, clientParam) {
       return rows.map(createSessionFromRow)
     }
   } catch (e) {
-    helpers.log(`Error running the getAllSessionsWithButtonId query: ${e}`)
+    helpers.logError(`Error running the getAllSessionsWithButtonId query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getAllSessionsWithButtonId: Error releasing client: ${err}`)
+        helpers.logError(`getAllSessionsWithButtonId: Error releasing client: ${err}`)
       }
     }
   }
@@ -193,13 +193,13 @@ async function getRecentSessionsWithInstallationId(installationId, clientParam) 
       return rows.map(createSessionFromRow)
     }
   } catch (e) {
-    helpers.log(`Error running the getRecentSessionsWithInstallationId query: ${e}`)
+    helpers.logError(`Error running the getRecentSessionsWithInstallationId query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getRecentSessionsWithInstallationId: Error releasing client: ${err}`)
+        helpers.logError(`getRecentSessionsWithInstallationId: Error releasing client: ${err}`)
       }
     }
   }
@@ -222,13 +222,13 @@ async function getSessionWithSessionId(sessionId, clientParam) {
       return createSessionFromRow(rows[0])
     }
   } catch (e) {
-    helpers.log(`Error running the getSessionWithSessionId query: ${e}`)
+    helpers.logError(`Error running the getSessionWithSessionId query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getSessionWithSessionId: Error releasing client: ${err}`)
+        helpers.logError(`getSessionWithSessionId: Error releasing client: ${err}`)
       }
     }
   }
@@ -249,13 +249,13 @@ async function getAllSessions(clientParam) {
 
     return rows.map(createSessionFromRow)
   } catch (e) {
-    helpers.log(`Error running the getAllSessions query: ${e}`)
+    helpers.logError(`Error running the getAllSessions query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getAllSessions: Error releasing client: ${err}`)
+        helpers.logError(`getAllSessions: Error releasing client: ${err}`)
       }
     }
   }
@@ -282,13 +282,13 @@ async function createSession(installationId, buttonId, unit, phoneNumber, numPre
       return createSessionFromRow(rows[0])
     }
   } catch (e) {
-    helpers.log(`Error running the createSession query: ${e}`)
+    helpers.logError(`Error running the createSession query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`createSession: Error releasing client: ${err}`)
+        helpers.logError(`createSession: Error releasing client: ${err}`)
       }
     }
   }
@@ -328,13 +328,13 @@ async function saveSession(session, clientParam) {
       values,
     )
   } catch (e) {
-    helpers.log(`Error running the saveSession query: ${e}`)
+    helpers.logError(`Error running the saveSession query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`saveSession: Error releasing client: ${err}`)
+        helpers.logError(`saveSession: Error releasing client: ${err}`)
       }
     }
   }
@@ -365,13 +365,13 @@ async function clearSessions(clientParam) {
 
     await client.query('DELETE FROM sessions')
   } catch (e) {
-    helpers.log(`Error running the clearSessions query: ${e}`)
+    helpers.logError(`Error running the clearSessions query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`clearSessions: Error releasing client: ${err}`)
+        helpers.logError(`clearSessions: Error releasing client: ${err}`)
       }
     }
   }
@@ -392,13 +392,13 @@ async function getButtonWithButtonId(buttonId, clientParam) {
       return rows[0]
     }
   } catch (e) {
-    helpers.log(`Error running the getButtonWithButtonId query: ${e}`)
+    helpers.logError(`Error running the getButtonWithButtonId query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getButtonWithButtonId: Error releasing client: ${err}`)
+        helpers.logError(`getButtonWithButtonId: Error releasing client: ${err}`)
       }
     }
   }
@@ -421,13 +421,13 @@ async function getButtonWithSerialNumber(serialNumber, clientParam) {
       return rows[0]
     }
   } catch (e) {
-    helpers.log(`Error running the getButtonWithSerialNumber query: ${e}`)
+    helpers.logError(`Error running the getButtonWithSerialNumber query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getButtonWithSerialNumber: Error releasing client: ${err}`)
+        helpers.logError(`getButtonWithSerialNumber: Error releasing client: ${err}`)
       }
     }
   }
@@ -452,13 +452,13 @@ async function createButton(buttonId, installationId, unit, phoneNumber, button_
       button_serial_number,
     ])
   } catch (e) {
-    helpers.log(`Error running the createButton query: ${e}`)
+    helpers.logError(`Error running the createButton query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`createButton: Error releasing client: ${err}`)
+        helpers.logError(`createButton: Error releasing client: ${err}`)
       }
     }
   }
@@ -480,13 +480,13 @@ async function clearButtons(clientParam) {
 
     await client.query('DELETE FROM buttons')
   } catch (e) {
-    helpers.log(`Error running the clearButtons query: ${e}`)
+    helpers.logError(`Error running the clearButtons query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`clearButtons: Error releasing client: ${err}`)
+        helpers.logError(`clearButtons: Error releasing client: ${err}`)
       }
     }
   }
@@ -506,13 +506,13 @@ async function createInstallation(name, responderPhoneNumber, fallbackPhoneNumbe
       [name, responderPhoneNumber, fallbackPhoneNumbers, incidentCategories],
     )
   } catch (e) {
-    helpers.log(`Error running the createInstallation query: ${e}`)
+    helpers.logError(`Error running the createInstallation query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`createInstallation: Error releasing client: ${err}`)
+        helpers.logError(`createInstallation: Error releasing client: ${err}`)
       }
     }
   }
@@ -534,13 +534,13 @@ async function clearInstallations(clientParam) {
 
     await client.query('DELETE FROM installations')
   } catch (e) {
-    helpers.log(`Error running the clearInstallations query: ${e}`)
+    helpers.logError(`Error running the clearInstallations query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`clearInstallations: Error releasing client: ${err}`)
+        helpers.logError(`clearInstallations: Error releasing client: ${err}`)
       }
     }
   }
@@ -561,13 +561,13 @@ async function getInstallations(clientParam) {
       return rows.map(createInstallationFromRow)
     }
   } catch (e) {
-    helpers.log(`Error running the getInstallations query: ${e}`)
+    helpers.logError(`Error running the getInstallations query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getInstallations: Error releasing client: ${err}`)
+        helpers.logError(`getInstallations: Error releasing client: ${err}`)
       }
     }
   }
@@ -590,13 +590,13 @@ async function getInstallationWithInstallationId(installationId, clientParam) {
       return createInstallationFromRow(rows[0])
     }
   } catch (e) {
-    helpers.log(`Error running the getInstallationWithInstallationId query: ${e}`)
+    helpers.logError(`Error running the getInstallationWithInstallationId query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getInstallationWithInstallationId: Error releasing client: ${err}`)
+        helpers.logError(`getInstallationWithInstallationId: Error releasing client: ${err}`)
       }
     }
   }
@@ -621,13 +621,13 @@ async function getInstallationWithSessionId(sessionId, clientParam) {
       return createInstallationFromRow(rows[0])
     }
   } catch (e) {
-    helpers.log(`Error running the getInstallationWithSessionId query: ${e}`)
+    helpers.logError(`Error running the getInstallationWithSessionId query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getInstallationWithSessionId: Error releasing client: ${err}`)
+        helpers.logError(`getInstallationWithSessionId: Error releasing client: ${err}`)
       }
     }
   }
@@ -650,13 +650,13 @@ async function getHubs(clientParam) {
       return rows.map(createHubFromRow)
     }
   } catch (e) {
-    helpers.log(`Error running the getHubs query: ${e}`)
+    helpers.logError(`Error running the getHubs query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getHubs: Error releasing client: ${err}`)
+        helpers.logError(`getHubs: Error releasing client: ${err}`)
       }
     }
   }
@@ -679,13 +679,13 @@ async function getHubWithSystemId(systemId, clientParam) {
       return createHubFromRow(rows[0])
     }
   } catch (e) {
-    helpers.log(`Error running the getHubWithSystemId query: ${e}`)
+    helpers.logError(`Error running the getHubWithSystemId query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getHubWithSystemId: Error releasing client: ${err}`)
+        helpers.logError(`getHubWithSystemId: Error releasing client: ${err}`)
       }
     }
   }
@@ -713,13 +713,13 @@ async function saveHeartbeat(systemId, flicLastSeenTime, flicLastPingTime, heart
       values,
     )
   } catch (e) {
-    helpers.log(`Error running the saveHeartbeat query: ${e}`)
+    helpers.logError(`Error running the saveHeartbeat query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`saveHeartbeat: Error releasing client: ${err}`)
+        helpers.logError(`saveHeartbeat: Error releasing client: ${err}`)
       }
     }
   }
@@ -742,13 +742,13 @@ async function saveHubRename(systemId, systemName, clientParam) {
     const values = [systemName, systemId]
     await client.query('UPDATE hubs SET system_name = $1 WHERE system_id = $2', values)
   } catch (e) {
-    helpers.log(`Error running the saveHubRename query: ${e}`)
+    helpers.logError(`Error running the saveHubRename query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`saveHubRename: Error releasing client: ${err}`)
+        helpers.logError(`saveHubRename: Error releasing client: ${err}`)
       }
     }
   }
@@ -771,13 +771,13 @@ async function saveHubMuteStatus(systemId, muted, clientParam) {
     const values = [muted, systemId]
     await client.query(query, values)
   } catch (e) {
-    helpers.log(`Error running the saveHubMuteStatus query: ${e}`)
+    helpers.logError(`Error running the saveHubMuteStatus query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`saveHubMuteStatus: Error releasing client: ${err}`)
+        helpers.logError(`saveHubMuteStatus: Error releasing client: ${err}`)
       }
     }
   }
@@ -801,13 +801,13 @@ async function saveHubHideStatus(systemId, hidden, clientParam) {
     const values = [hidden, systemId]
     await client.query(query, values)
   } catch (e) {
-    helpers.log(`Error running the saveHubHideStatus query: ${e}`)
+    helpers.logError(`Error running the saveHubHideStatus query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`saveHubHideStatus: Error releasing client: ${err}`)
+        helpers.logError(`saveHubHideStatus: Error releasing client: ${err}`)
       }
     }
   }
@@ -831,13 +831,13 @@ async function saveHubAlertStatus(hub, clientParam) {
     const values = [hub.sentAlerts, hub.systemId]
     await client.query(query, values)
   } catch (e) {
-    helpers.log(`Error running the saveHubAlertStatus query: ${e}`)
+    helpers.logError(`Error running the saveHubAlertStatus query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`saveHubAlertStatus: Error releasing client: ${err}`)
+        helpers.logError(`saveHubAlertStatus: Error releasing client: ${err}`)
       }
     }
   }
@@ -858,13 +858,13 @@ async function getDataForExport(clientParam) {
 
     return rows
   } catch (e) {
-    helpers.log(`Error running the getDataForExport query: ${e}`)
+    helpers.logError(`Error running the getDataForExport query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getDataForExport: Error releasing client: ${err}`)
+        helpers.logError(`getDataForExport: Error releasing client: ${err}`)
       }
     }
   }
@@ -884,13 +884,13 @@ async function getCurrentTime(clientParam) {
 
     return time
   } catch (e) {
-    helpers.log(`Error running the getCurrentTime query: ${e}`)
+    helpers.logError(`Error running the getCurrentTime query: ${e}`)
   } finally {
     if (!transactionMode) {
       try {
         client.release()
       } catch (err) {
-        helpers.log(`getCurrentTime: Error releasing client: ${err}`)
+        helpers.logError(`getCurrentTime: Error releasing client: ${err}`)
       }
     }
   }
@@ -900,7 +900,7 @@ async function close() {
   try {
     await pool.end()
   } catch (e) {
-    helpers.log(`Error running the close query: ${e}`)
+    helpers.logError(`Error running the close query: ${e}`)
   }
 }
 
